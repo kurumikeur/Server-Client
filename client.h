@@ -1,11 +1,3 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <cctype>
-#include <unistd.h>
 #include "util.h"
 
 class Client{
@@ -17,6 +9,6 @@ public:
     void start();
     void close();
 private:
-    int sockfd;
+    int sockfd = -1;
     struct addrinfo hints, *clientinfo;
 };

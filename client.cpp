@@ -32,33 +32,45 @@ void Client::start() {
     char portstr[20];
     sprintf(portstr, "%d", port);
 
-    if (getaddrinfo(hostname, (const char*)portstr, &hints, &clientinfo) != 0){
-        printf("err");
-        exit(1);
-    }
+    if (getaddrinfo(hostname, (const char*)portstr, &hints, &clientinfo) != 0)
+        err("1");
 
     sockfd = socket(clientinfo->ai_family, clientinfo->ai_socktype, clientinfo->ai_protocol);
-    if (sockfd == -1) {
-        printf("err");
-        exit(1);
-    }
+    if (sockfd == -1)
+        err("1");
 
-    printf("TCP client test. Hiii!! :3 :3 :3\n");
-    connect(sockfd, clientinfo->ai_addr, clientinfo->ai_addrlen);
-    char buffer[BUFFER_SIZE];
-    while (true) {
-        printf("Enter message to send: ");
-        if (fgets(buffer, BUFFER_SIZE, stdin) == NULL){
-            printf("\nExiting.\n");
-            break;
+    sleep(1);
+    printf("Starting client. Hiii!! :3 :3 :3\n");
+    //while(true){
+        if (connect(sockfd, clientinfo->ai_addr, clientinfo->ai_addrlen) == -1)
+            err("Couldn't connect to server. Exiting.\n");
+        printf("Succesfully connected to server at: %s", "PLACEHOLDER\n");
+        char bufferSend[BUFFER_SIZE];
+        char bufferRecv[BUFFER_SIZE];
+        while (true) {
+            printf("Enter message to send: ");
+            if (fgets(bufferSend, BUFFER_SIZE, stdin) == NULL){
+                printf("\nExiting.\n");
+                break;
+            }
+            if (strlen(bufferSend) <= 0)
+                continue;
+            ssize_t bytesSent = send(sockfd, bufferSend, strlen(bufferSend), 0);
+            if (bytesSent == -1) 
+                printf("Error sending message.\n");
+
+            ssize_t bytesRead = recv(sockfd, bufferRecv, sizeof(bufferRecv) - 1, 0);
+            if (bytesRead <= 0) {
+                printf("Client disconnected or error occurred.\n");
+                break;
+            } 
+            if (bufferRecv[bytesRead - 1] == '\n') 
+                bufferRecv[bytesRead - 1] = '\0';
+            else
+                bufferRecv[bytesRead] = '\0';
+            printf("Received: %s\n", bufferRecv);    
         }
-        if (strlen(buffer) <= 0)
-            continue;
-        ssize_t bytesSent = send(sockfd, buffer, strlen(buffer), 0);
-        if (bytesSent == -1) {
-            printf("Error sending message.\n");
-        }
-    }
+   // }
 }
 
 void Client::close() {
