@@ -19,32 +19,26 @@ int main(int argc, char* argv[]) {
 Client::Client() {
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    
+    hints.ai_socktype = SOCK_STREAM;  
 }
 
 Client::~Client() {
     freeaddrinfo(clientinfo);
 }
 
+void Client::start() { 
+    setup();
 
-void Client::start() {
-    char portstr[20];
-    sprintf(portstr, "%d", port);
-
-    if (getaddrinfo(hostname, (const char*)portstr, &hints, &clientinfo) != 0)
-        err("1");
-
-    sockfd = socket(clientinfo->ai_family, clientinfo->ai_socktype, clientinfo->ai_protocol);
-    if (sockfd == -1)
-        err("1");
-
-    sleep(1);
     printf("Starting client. Hiii!! :3 :3 :3\n");
     //while(true){
-        if (connect(sockfd, clientinfo->ai_addr, clientinfo->ai_addrlen) == -1)
-            err("Couldn't connect to server. Exiting.\n");
-        printf("Succesfully connected to server at: %s", "PLACEHOLDER\n");
+        for (int i = 0; connect(sockfd, clientinfo->ai_addr, clientinfo->ai_addrlen) == -1; i++){
+            if (i == 3)
+                err("Couldn't connect to server. Exiting.\n");
+            sleep(2);
+        }
+        char IPaddr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(((sockaddr_in*)clientinfo->ai_addr)->sin_addr), IPaddr, INET_ADDRSTRLEN);
+        printf("Succesfully connected to server at: %s:%d\n", IPaddr, ntohs(((sockaddr_in*)clientinfo->ai_addr)->sin_port));
         char bufferSend[BUFFER_SIZE];
         char bufferRecv[BUFFER_SIZE];
         while (true) {
@@ -74,5 +68,18 @@ void Client::start() {
 }
 
 void Client::close() {
-    sockfd != -1 ? ::close(sockfd) : sockfd ;
+    sockfd != -1 ? ::close(sockfd) : sockfd ;  
+}
+
+void Client::setup(){
+    char portstr[20];
+    sprintf(portstr, "%d", port);
+
+    if (getaddrinfo(hostname, (const char*)portstr, &hints, &clientinfo) != 0)
+        err("1");
+
+    sockfd = socket(clientinfo->ai_family, clientinfo->ai_socktype, clientinfo->ai_protocol);
+    if (sockfd == -1)
+        err("1");
+
 }

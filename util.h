@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cctype>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define BUFFER_SIZE 1024
 

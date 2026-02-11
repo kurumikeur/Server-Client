@@ -28,20 +28,8 @@ Server::~Server() {
 }
 
 void Server::start(){
-    char portstr[20];
-    sprintf(portstr, "%d", port);
-
-    //Socket set-up
-    if (getaddrinfo(NULL, (const char*)portstr, &hints, &servinfo) != 0)
-        err(" ");
-    // if ( ((sockaddr_in*)servinfo->ai_addr)->sin_port != (unsigned short int)port  )
-    //     printf("[WARN] Wasn't able to get socket with set port. Other port was set.\n");
-    sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
-    if (sockfd == -1) 
-        err(" ");
-
-    bind(sockfd, servinfo->ai_addr, servinfo->ai_addrlen);
-    printf("Server started with selected port: %d. Hiii! :3\n",  ((sockaddr_in*)servinfo->ai_addr)->sin_port);
+    setup();
+    
     listen(sockfd, 3);
     connfd = accept(sockfd, NULL, NULL);
     while (true) {
@@ -77,3 +65,17 @@ void Server::close(){
     sockfd != -1 ? ::close(sockfd) : sockfd ;
 }
 
+void Server::setup(){
+    char portstr[20];
+    sprintf(portstr, "%d", port);
+    if (getaddrinfo(NULL, (const char*)portstr, &hints, &servinfo) != 0)
+        err(" ");
+    // if ( ((sockaddr_in*)servinfo->ai_addr)->sin_port != (unsigned short int)port  )
+    //     printf("[WARN] Wasn't able to get socket with set port. Other port was set.\n");
+    sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+    if (sockfd == -1) 
+        err(" ");
+
+    bind(sockfd, servinfo->ai_addr, servinfo->ai_addrlen);
+    printf("Server started with selected port: %d. Hiii! :3\n",  ntohs(((sockaddr_in*)servinfo->ai_addr)->sin_port));
+}

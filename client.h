@@ -9,6 +9,7 @@ public:
     void start();
     void close();
 private:
+    void setup();
     int sockfd = -1;
     struct addrinfo hints, *clientinfo;
 };
