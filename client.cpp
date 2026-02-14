@@ -32,7 +32,7 @@ void Client::start() {
     printf("Starting client. Hiii!! :3 :3 :3\n");
     //while(true){
         for (int i = 0; connect(sockfd, clientinfo->ai_addr, clientinfo->ai_addrlen) == -1; i++){
-            if (i == 3)
+            if (i == RECONN_ATTEMPTS_COUNT)
                 err("Couldn't connect to server. Exiting.\n");
             sleep(2);
         }
@@ -53,22 +53,22 @@ void Client::start() {
             if (bytesSent == -1) 
                 printf("Error sending message.\n");
 
-            ssize_t bytesRead = recv(sockfd, bufferRecv, sizeof(bufferRecv) - 1, 0);
-            if (bytesRead <= 0) {
-                printf("Client disconnected or error occurred.\n");
-                break;
-            } 
-            if (bufferRecv[bytesRead - 1] == '\n') 
-                bufferRecv[bytesRead - 1] = '\0';
-            else
-                bufferRecv[bytesRead] = '\0';
-            printf("Received: %s\n", bufferRecv);    
+            // ssize_t bytesRead = recv(sockfd, bufferRecv, sizeof(bufferRecv) - 1, 0);
+            // if (bytesRead <= 0) {
+            //     printf("Client disconnected or error occurred.\n");
+            //     break;
+            // } 
+            // if (bufferRecv[bytesRead - 1] == '\n') 
+            //     bufferRecv[bytesRead - 1] = '\0';
+            // else
+            //     bufferRecv[bytesRead] = '\0';
+            // printf("Received: %s\n", bufferRecv);    
         }
    // }
 }
 
 void Client::close() {
-    sockfd != -1 ? ::close(sockfd) : sockfd ;  
+    sockfd != -1 ? ::close(sockfd) : sockfd;  
 }
 
 void Client::setup(){

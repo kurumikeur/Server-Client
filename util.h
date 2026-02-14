@@ -10,6 +10,8 @@
 #include <cctype>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
+#include <poll.h>
 
 #define BUFFER_SIZE 1024
 

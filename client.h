@@ -1,4 +1,5 @@
 #include "util.h"
+#define RECONN_ATTEMPTS_COUNT 100
 
 class Client{
 public:
@@ -11,5 +12,6 @@ public:
 private:
     void setup();
     int sockfd = -1;
+    int connfd = -1;
     struct addrinfo hints, *clientinfo;
 };
